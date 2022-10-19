@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
 			auto bin = v.rule({binName, NoHash}, objs, {
 				{[binName, &log] {
 					 log.link("%s", binName.c_str());
-					 util::mkdirRecursive(util::getParentDir(binName).c_str());
+//					 dirMaker.mkdirRecursive(util::getParentDir(binName).c_str());
 				}},
 				ll + SS{"-o", binName} + toNames(objs)
 			});
