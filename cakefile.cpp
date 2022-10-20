@@ -1,4 +1,5 @@
-/// @cake.cc g++ -std=c++20 -fno-rtti -march=x86-64 -O2 -flto=auto -s -o target/cakefile cakefile.cpp -l:libdimgel-cake-1.a -l:libdimgel-util-1.a -lxxhash
+/// @cake.cc g++ -std=c++20 -fno-rtti -Wall -Wextra -Wpedantic -Werror=format -Werror=return-type -Wno-comment \
+///          -march=x86-64 -O2 -flto=auto -s -o target/cakefile cakefile.cpp -l:libdimgel-cake-1.a -l:libdimgel-util-1.a -lxxhash
 // Optional. Technically. You'll surely want to adjust compiler options and link more libs.
 
 #include <dimgel-cake-1/aux.h>
