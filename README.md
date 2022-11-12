@@ -10,7 +10,7 @@ See [cakefile.cpp](cakefile.cpp) and console log [screenshot.png](screenshot.png
 
 ## How to run
 
-Built for x86-64 with gcc 12.2.0, glibc 2.36. Depends on libxxhash.so.0.
+Built on ArtixLinux for x86-64 with gcc 12.2.0, glibc 2.36. Depends on libxxhash.so.0.
 
 Since I don't provide headers/libs for you to recompile `./cakefile.cpp` in this demo, you have to keep `target/cakefile` -- and **with mtime greater than** `./cakefile.cpp` so `cake` does not try to recompile it.
 
