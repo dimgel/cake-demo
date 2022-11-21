@@ -1,12 +1,12 @@
 /// @cake.cc g++ -std=c++20 -fno-rtti -Wall -Wextra -Wpedantic -Werror=format -Werror=return-type -Wno-stringop-overflow -Wno-comment \
 ///          -march=x86-64 -O2 -flto=auto -s -o target/cakefile cakefile.cpp -l:libdimgel-cake-1.a -l:libdimgel-util-1.a -lxxhash
-// Optional. Technically. You'll surely want to adjust compiler options and link more libs.
 
 #include <dimgel-cake-1/aux.h>
 
 int main(int argc, char** argv) {
-	with(argc, argv, [](Oven& v, aux::Log& log) {
-		v.setDefaultTarget("all");
+	return with(argc, argv, [](Oven& v, aux::Log& log) {
+		// Now called by aux::with().
+//		v.setDefaultTarget("all");
 
 		// Don't bother creating rules we won't need.
 		if (v.getActualTargetName() == "clean") {
@@ -20,14 +20,14 @@ int main(int argc, char** argv) {
 
 		DirMaker dirMaker(v);
 
-		// S = std::string, SS = std::vector<S>. Command and each arg are in separate strings, for execvp(3).
-		SS ccll {"g++", "-fno-rtti", "-march=x86-64", "-O2", "-flto=auto", "-s"};
-		SS cc = ccll + SS{"-MMD", "-MP", "-c"};
-		SS& ll = ccll;
+		// S = std::string, VS = std::vector<S>. Command and each arg are in separate strings, for execvp(3).
+		VS ccll {"g++", "-fno-rtti", "-march=x86-64", "-O2", "-flto=auto", "-s"};
+		VS cc = ccll + VS{"-MMD", "-MP", "-c"};
+		VS& ll = ccll;
 
-		// T = TargetRef (variant: string or "resolved" pair(ruleImpl*, targetIndex)), TT = std::unordered_set<T>.
+		// T = TargetRef (variant: string or "resolved" pair(ruleImpl*, targetIndex)), UT = std::unordered_set<T>.
 		// We can save cake some work by passing around "resolved" dependencies instead of strings.
-		TT objs;
+		UT objs;
 
 		findFilesByNameSuffix("src", {".cpp"}, [&](S cpp) {
 
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
 					dirMaker.mkdirRecursive(getParentDir(o));
 				}},
 				// External command is SS.
-				cc + SS{"-o", o, cpp}
+				cc + VS{"-o", o, cpp}
 			});
 		});
 
@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
 				 log.link("%s", binName.c_str());
 //				 dirMaker.mkdirRecursive(getParentDir(binName));
 			}},
-			ll + SS{"-o", binName} + toNames(objs)
+			ll + VS{"-o", binName} + toNames(objs)
 		});
 
 		v.phony("all", {bin});
