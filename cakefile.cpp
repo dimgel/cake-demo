@@ -4,7 +4,7 @@
 #include <dimgel-cake1/aux.h>
 
 int main(int argc, char** argv) {
-	return with(argc, argv, [](Oven& v, aux::Log& log) {
+	return with(argc, argv, [](Oven& v) {
 		// Now called by aux::with().
 //		v.setDefaultTarget("all");
 
@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
 			return;
 		}
 
-		DirMaker dirMaker(v);
+		DirMaker dm(v);
 
 		// S = std::string, VS = std::vector<S>. Command and each arg are in separate strings, for execvp(3).
 		VS ccll {"g++", "-fno-rtti", "-march=x86-64", "-O2", "-flto=auto", "-s"};
@@ -41,9 +41,11 @@ int main(int argc, char** argv) {
 			objs += v.rule(o, parseDFile(v, {.d = d, .o = o}), {
 				// Internal command is {function<void()>}: we don't waste time on fork/exec for what we can do ourselves.
 				// ATTENTION! Capturing `o` by value because it goes out of scope at the end of for() iteration, before cook() is run!
-				{[o, &dirMaker, &log] {
-					log.compile("%s", o.c_str());
-					dirMaker.mkdirRecursive(getParentDir(o));
+				{[&v, &dm, o] {
+					if (v.getParams().verbosity >= Verbosity_Default) {
+						v.getLog().compile("%s", o.c_str());
+					}
+					dm.mkdirRecursive(getParentDir(o));
 				}},
 				// External command is SS.
 				cc + VS{"-o", o, cpp}
@@ -54,9 +56,10 @@ int main(int argc, char** argv) {
 
 		S binName = "target/hello";
 		auto bin = v.rule({binName, NoHash}, objs, {
-			{[&binName, &log] {
-				 log.link("%s", binName.c_str());
-//				 dirMaker.mkdirRecursive(getParentDir(binName));
+			{[&v, &binName] {
+				if (v.getParams().verbosity >= Verbosity_Default) {
+					v.getLog().link("%s", binName.c_str());
+				}
 			}},
 			ll + VS{"-o", binName} + toNames(objs)
 		});
