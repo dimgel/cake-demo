@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
 		VS cc = ccll + VS{"-MMD", "-MP", "-c"};
 		VS& ll = ccll;
 
-		// T = TargetRef (variant: string or "resolved" pair(ruleImpl*, targetIndex)), UT = std::unordered_set<T>.
+		// T = TargetRef (which wraps variant: string or "resolved" pair(ruleImpl*, targetIndex)), UT = std::unordered_set<T>.
 		// We can save cake some work by passing around "resolved" dependencies instead of strings.
 		UT objs;
 
@@ -36,9 +36,7 @@ int main(int argc, char** argv) {
 			S o = changePrefixAndExt("src/", "target/build/", cpp, "o");
 			S d = changeExt(o, "d");
 
-//			objs += v.rule(o, {cpp, {d, PhonyIfMissing}}, {
-//			objs += v.rule(o, cpp + parseDFile(v, {.d = d, .o = o}), {
-			objs += v.rule(o, parseDFile(v, {.d = d, .o = o}), {
+			objs += v.rule(o, parseDFile(v, {.cpp = cpp, .d = d, .o = o}), {
 				// Internal command is {function<void()>}: we don't waste time on fork/exec for what we can do ourselves.
 				// ATTENTION! Capturing `o` by value because it goes out of scope at the end of for() iteration, before cook() is run!
 				{[&v, &dm, o] {
@@ -47,7 +45,7 @@ int main(int argc, char** argv) {
 					}
 					dm.mkdirRecursive(getParentDir(o));
 				}},
-				// External command is SS.
+				// External command is {VS}.
 				cc + VS{"-o", o, cpp}
 			});
 		});
