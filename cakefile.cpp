@@ -33,8 +33,8 @@ int main(int argc, char** argv) {
 
 			// No patterns like `%.o: %.cpp`, no automatic vars. Rule for each .cpp file is added manually -- stupid and straightforward.
 			// On the other hand, it's not THAT much more verbose than `make`, and with C++ you can write any helper functions you like.
-			S o = changePrefixAndExt("src/", "target/build/", cpp, "o");
-			S d = changeExt(o, "d");
+			S o = util::changePrefixAndExt("src/", "target/build/", cpp, "o");
+			S d = util::changeExt(o, "d");
 
 			objs += v.rule(o, parseDFile(v, {.cpp = cpp, .d = d, .o = o}), {
 				// Internal command is {function<void()>}: we don't waste time on fork/exec for what we can do ourselves.
@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
 					if (v.getParams().verbosity >= Verbosity_Default) {
 						v.getLog().compile("%s", o.c_str());
 					}
-					dm.mkdirRecursive(getParentDir(o));
+					dm.mkdirRecursive(util::getParentDir(o));
 				}},
 				// External command is {VS}.
 				cc + VS{"-o", o, cpp}
