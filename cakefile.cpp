@@ -20,14 +20,14 @@ int main(int argc, char** argv) {
 
 		DirMaker dm(v);
 
-		// S = std::string, VS = std::vector<S>. Command and each arg are in separate strings, for execvp(3).
-		VS ccll {"g++", "-fno-rtti", "-march=x86-64", "-O2", "-flto=auto", "-s"};
-		VS cc = ccll + VS{"-MMD", "-MP", "-c"};
-		VS& ll = ccll;
+		// S = std::string, V<S> = std::vector<S>. Command and each arg are in separate strings, for execvp(3).
+		V<S> ccll {"g++", "-fno-rtti", "-march=x86-64", "-O2", "-flto=auto", "-s"};
+		V<S> cc = ccll + V<S>{"-MMD", "-MP", "-c"};
+		V<S>& ll = ccll;
 
-		// T = TargetRef (which wraps variant: string or "resolved" pair(ruleImpl*, targetIndex)), UT = std::unordered_set<T>.
+		// R = TargetRef (which wraps variant: string or "resolved" pair(ruleImpl*, targetIndex)), U<R> = std::unordered_set<R>.
 		// We can save cake some work by passing around "resolved" dependencies instead of strings.
-		UT objs;
+		U<R> objs;
 
 		findFilesByNameSuffix("src", {".cpp"}, [&](S cpp) {
 
@@ -45,8 +45,8 @@ int main(int argc, char** argv) {
 					}
 					dm.mkdirRecursive(util::getParentDir(o));
 				}},
-				// External command is {VS}.
-				cc + VS{"-o", o, cpp}
+				// External command is V<S>.
+				cc + V<S>{"-o", o, cpp}
 			});
 		});
 
@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
 					v.getLog().link("%s", binName.c_str());
 				}
 			}},
-			ll + VS{"-o", binName} + toNames(objs)
+			ll + V<S>{"-o", binName} + toNames(objs)
 		});
 
 		v.phony("all", {bin});
