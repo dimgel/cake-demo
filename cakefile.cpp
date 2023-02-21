@@ -25,9 +25,9 @@ int main(int argc, char** argv) {
 		V<S> cc = ccll + V<S>{"-MMD", "-MP", "-c"};
 		V<S>& ll = ccll;
 
-		// R = TargetRef (which wraps variant: string or "resolved" pair(ruleImpl*, targetIndex)), U<R> = std::unordered_set<R>.
+		// R = TargetRef (which wraps variant: string or "resolved" pair(ruleImpl*, targetIndex)), US<R> = std::unordered_set<R>.
 		// We can save cake some work by passing around "resolved" dependencies instead of strings.
-		U<R> objs;
+		US<R> objs;
 
 		findFilesByNameSuffix("src", {".cpp"}, [&](S cpp) {
 
