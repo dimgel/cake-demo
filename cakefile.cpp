@@ -1,4 +1,4 @@
-/// @cake.cc g++ -std=c++20 -fno-rtti -Wall -Wextra -Wpedantic -Werror=format -Werror=return-type -Wno-stringop-overflow -Wno-comment \
+/// @cake.cc g++ -std=c++20 -fno-rtti -Wall -Wextra -Werror=format -Werror=return-type -Wno-stringop-overflow -Wno-comment \
 ///          -march=x86-64 -O2 -flto=auto -s -o target/cakefile cakefile.cpp -l:dimgel-cake1.a -l:dimgel-util1.a -lxxhash
 
 #include <dimgel-cake1/aux.h>
