@@ -29,7 +29,10 @@ int main(int argc, char** argv) {
 		// We can save cake some work by passing around "resolved" dependencies instead of strings.
 		US<R> objs;
 
-		findFilesByNameSuffix("src", {".cpp"}, [&](S cpp) {
+		// SV = std::string_view, "Z" name suffix of `cppZ` means 0-terminated. Directory scanner does not unnecessarily copy strings,
+		// instead provides string-view to its internal buffer. Or you can write: auto cpps = findCpps("src"); for (S& cpp : cpps) { ... }.
+		findCpps("src", [&](SV cppZ) {
+			S cpp {cppZ};
 
 			// No patterns like `%.o: %.cpp`, no automatic vars. Rule for each .cpp file is added manually -- stupid and straightforward.
 			// On the other hand, it's not THAT much more verbose than `make`, and with C++ you can write any helper functions you like.
